@@ -1,16 +1,40 @@
+'use client'
+
+import { useState, useEffect } from 'react'
 import { getDashboardStats } from '@/lib/actions/products'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
-import { Package, Flower2, ShoppingBag, Boxes, Plus } from 'lucide-react'
+import { Package, Flower2, ShoppingBag, Boxes, Plus, Loader2 } from 'lucide-react'
 
-// Force dynamic rendering - don't pre-render during build
-export const dynamic = 'force-dynamic'
+type DashboardStats = {
+  totalProducts: number
+  totalFlowers: number
+  totalNonFlower: number
+  totalBulk: number
+}
 
-export default async function AdminDashboard() {
-  const stats = await getDashboardStats()
+export default function AdminDashboard() {
+  const [stats, setStats] = useState<DashboardStats | null>(null)
+  const [loading, setLoading] = useState(true)
 
-  const statsCards = [
+  useEffect(() => {
+    loadStats()
+  }, [])
+
+  const loadStats = async () => {
+    try {
+      setLoading(true)
+      const data = await getDashboardStats()
+      setStats(data)
+    } catch (error) {
+      console.error('Failed to load stats:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const statsCards = stats ? [
     {
       title: 'Total Products',
       value: stats.totalProducts,
@@ -39,7 +63,18 @@ export default async function AdminDashboard() {
       description: 'Bulk category products',
       color: 'text-orange-600'
     }
-  ]
+  ] : []
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="flex flex-col items-center gap-3">
+          <Loader2 className="w-8 h-8 animate-spin text-gray-400" />
+          <p className="text-sm text-gray-500">Loading dashboard...</p>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
