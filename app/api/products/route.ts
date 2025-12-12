@@ -1,6 +1,10 @@
 import { NextResponse } from 'next/server'
 import { getAllProducts, getProductsByCategory } from '@/lib/actions/products'
 
+// Force dynamic rendering - don't execute during build
+export const dynamic = 'force-dynamic'
+export const runtime = 'nodejs'
+
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url)
