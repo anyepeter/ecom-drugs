@@ -4,6 +4,9 @@ import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 import { Package, Flower2, ShoppingBag, Boxes, Plus } from 'lucide-react'
 
+// Force dynamic rendering - don't pre-render during build
+export const dynamic = 'force-dynamic'
+
 export default async function AdminDashboard() {
   const stats = await getDashboardStats()
 
