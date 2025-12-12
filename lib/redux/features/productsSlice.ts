@@ -1,10 +1,4 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit'
-import {
-  getProductsByCategory,
-  getFlowersProducts,
-  getNonFlowerProducts,
-  getBulkProducts
-} from '@/lib/actions/products'
 import type { Product, Category } from '@prisma/client'
 
 // Types
@@ -25,11 +19,15 @@ const initialState: ProductsState = {
   currentCategory: null,
 }
 
-// Async thunks
+// Async thunks - now calling API routes instead of server actions
 export const fetchAllProducts = createAsyncThunk(
   'products/fetchAll',
   async () => {
-    const products = await getProductsByCategory()
+    const response = await fetch('/api/products')
+    if (!response.ok) {
+      throw new Error('Failed to fetch products')
+    }
+    const products = await response.json()
     return products
   }
 )
@@ -37,7 +35,11 @@ export const fetchAllProducts = createAsyncThunk(
 export const fetchFlowersProducts = createAsyncThunk(
   'products/fetchFlowers',
   async () => {
-    const products = await getFlowersProducts()
+    const response = await fetch('/api/products?category=flowers')
+    if (!response.ok) {
+      throw new Error('Failed to fetch flowers')
+    }
+    const products = await response.json()
     return products
   }
 )
@@ -45,7 +47,11 @@ export const fetchFlowersProducts = createAsyncThunk(
 export const fetchNonFlowerProducts = createAsyncThunk(
   'products/fetchNonFlower',
   async () => {
-    const products = await getNonFlowerProducts()
+    const response = await fetch('/api/products?category=nonflower')
+    if (!response.ok) {
+      throw new Error('Failed to fetch non-flower products')
+    }
+    const products = await response.json()
     return products
   }
 )
@@ -53,7 +59,11 @@ export const fetchNonFlowerProducts = createAsyncThunk(
 export const fetchBulkProducts = createAsyncThunk(
   'products/fetchBulk',
   async () => {
-    const products = await getBulkProducts()
+    const response = await fetch('/api/products?category=bulk')
+    if (!response.ok) {
+      throw new Error('Failed to fetch bulk products')
+    }
+    const products = await response.json()
     return products
   }
 )
@@ -61,10 +71,15 @@ export const fetchBulkProducts = createAsyncThunk(
 export const fetchProductsByCategory = createAsyncThunk(
   'products/fetchByCategory',
   async (category: Category | 'all') => {
-    if (category === 'all') {
-      return await getProductsByCategory()
+    const url = category === 'all'
+      ? '/api/products'
+      : `/api/products?category=${category}`
+    const response = await fetch(url)
+    if (!response.ok) {
+      throw new Error('Failed to fetch products')
     }
-    return await getProductsByCategory(category)
+    const products = await response.json()
+    return products
   }
 )
 
