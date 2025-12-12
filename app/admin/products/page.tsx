@@ -17,7 +17,19 @@ import Link from 'next/link'
 import { ArrowLeft, Plus, Edit, Trash2, Loader2 } from 'lucide-react'
 import Image from 'next/image'
 import DeleteProductModal from '@/components/admin/DeleteProductModal'
-import type { Product } from '@prisma/client'
+// Product type definition
+type Product = {
+  id: string
+  name: string
+  category: 'flowers' | 'nonflower' | 'bulk'
+  price: number
+  rate: number
+  flavour: string
+  images: string[]
+  video?: string | null
+  createdAt: Date
+  updatedAt: Date
+}
 
 export default function ProductsPage() {
   const [products, setProducts] = useState<Product[]>([])
