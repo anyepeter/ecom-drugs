@@ -1,3 +1,5 @@
+'use client'
+
 import Navigation from '@/components/Navigation'
 import Hero from '@/components/Hero'
 import FeaturedProducts from '@/components/FeaturedProducts'
