@@ -9,6 +9,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetClose 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import ProductCard from '@/components/ProductCard'
 import FilterSidebar from '@/components/FilterSidebar'
+import Pagination from '@/components/Pagination'
 import { useAppDispatch, useAppSelector } from '@/lib/redux/hooks'
 import { fetchFlowersProducts } from '@/lib/redux/features/productsSlice'
 
@@ -27,6 +28,9 @@ export default function FlowersPage() {
   const [priceRange, setPriceRange] = useState([10, 1500])
   const [selectedFlavours, setSelectedFlavours] = useState<string[]>([])
   const [mobileFilterOpen, setMobileFilterOpen] = useState(false)
+  const [currentPage, setCurrentPage] = useState(1)
+
+  const PRODUCTS_PER_PAGE = 9
 
   // Fetch flowers products on mount
   useEffect(() => {
@@ -66,6 +70,22 @@ export default function FlowersPage() {
         return 0
     }
   })
+
+  // Pagination
+  const totalPages = Math.ceil(sortedProducts.length / PRODUCTS_PER_PAGE)
+  const startIndex = (currentPage - 1) * PRODUCTS_PER_PAGE
+  const endIndex = startIndex + PRODUCTS_PER_PAGE
+  const paginatedProducts = sortedProducts.slice(startIndex, endIndex)
+
+  // Reset to page 1 when filters change
+  useEffect(() => {
+    setCurrentPage(1)
+  }, [priceRange, selectedFlavours, sortBy])
+
+  // Scroll to top when page changes
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }, [currentPage])
 
   return (
     <div className="min-h-screen bg-white">
@@ -198,13 +218,22 @@ export default function FlowersPage() {
               {/* Product Grid */}
               {!loading && !error && (
                 <>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {sortedProducts.map((product) => (
-                      <ProductCard key={product.id} product={product} />
-                    ))}
-                  </div>
+                  {sortedProducts.length > 0 ? (
+                    <>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {paginatedProducts.map((product) => (
+                          <ProductCard key={product.id} product={product} />
+                        ))}
+                      </div>
 
-                  {sortedProducts.length === 0 && (
+                      {/* Pagination */}
+                      <Pagination
+                        currentPage={currentPage}
+                        totalPages={totalPages}
+                        onPageChange={setCurrentPage}
+                      />
+                    </>
+                  ) : (
                     <div className="text-center py-12">
                       <p className="text-gray-500">No products found matching your filters.</p>
                     </div>

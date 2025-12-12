@@ -4,8 +4,8 @@ import { Instagram, Phone, MessageCircle } from 'lucide-react'
 
 const footerLinks = [
   { name: 'HOME', href: '/' },
-  { name: 'SHOP FLOWER', href: '/shop/flowers' },
-  { name: 'SHOP FLOWER', href: '/shop/non-flowers' },
+  { name: 'FLOWER', href: '/shop/flowers' },
+  { name: 'NON FLOWER', href: '/shop/non-flowers' },
   { name: 'CLICK TO VERIFY', href: '#' },
 ]
 

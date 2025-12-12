@@ -17,6 +17,10 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import { useAppDispatch, useAppSelector } from '@/lib/redux/hooks'
+import { openCart } from '@/lib/redux/features/cartSlice'
+import Cart from '@/components/Cart'
+import SearchModal from '@/components/SearchModal'
 
 const shopFlowerItems = [
   { name: 'Flowers', href: '/shop/flowers' },
@@ -33,6 +37,11 @@ export default function Navigation() {
   const [isShopFlowerOpen, setIsShopFlowerOpen] = useState(false)
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
   const [hoverTimeout, setHoverTimeout] = useState<NodeJS.Timeout | null>(null)
+  const [isSearchOpen, setIsSearchOpen] = useState(false)
+
+  const dispatch = useAppDispatch()
+  const { items } = useAppSelector((state) => state.cart)
+  const itemCount = items.reduce((sum, item) => sum + item.quantity, 0)
 
   return (
     <>
@@ -142,16 +151,23 @@ export default function Navigation() {
                 size="icon"
                 className="rounded-full hover:bg-gray-100"
                 aria-label="Search"
+                onClick={() => setIsSearchOpen(true)}
               >
                 <Search className="h-5 w-5 text-gray-700" />
               </Button>
               <Button
                 variant="ghost"
                 size="icon"
-                className="rounded-full hover:bg-gray-100"
+                className="rounded-full hover:bg-gray-100 relative"
+                onClick={() => dispatch(openCart())}
                 aria-label="Shopping cart"
               >
                 <ShoppingCart className="h-5 w-5 text-gray-700" />
+                {itemCount > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-semibold">
+                    {itemCount}
+                  </span>
+                )}
               </Button>
 
               {/* Mobile Menu Toggle */}
@@ -240,6 +256,12 @@ export default function Navigation() {
           </div>
         </div>
       </nav>
+
+      {/* Cart Drawer */}
+      <Cart />
+
+      {/* Search Modal */}
+      <SearchModal isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
     </>
   )
 }
