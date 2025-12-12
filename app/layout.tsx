@@ -5,6 +5,11 @@ import StoreProvider from '@/lib/redux/provider'
 export const metadata: Metadata = {
   title: 'ZMARTIES - Official Page',
   description: 'Official ZMARTIES page - Free shipping on every order!',
+  icons: {
+    icon: '/images/logo.avif',
+    shortcut: '/images/logo.avif',
+    apple: '/images/logo.avif',
+  },
 }
 
 export default function RootLayout({
