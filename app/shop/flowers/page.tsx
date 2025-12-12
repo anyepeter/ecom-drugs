@@ -111,11 +111,11 @@ export default function FlowersPage() {
               <SheetContent side="left" className="w-80 overflow-y-auto">
                 <SheetHeader className="flex flex-row items-center justify-between">
                   <SheetTitle>Filters</SheetTitle>
-                  <SheetClose asChild>
+                  {/* <SheetClose asChild>
                     <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
                       <X className="h-4 w-4" />
                     </Button>
-                  </SheetClose>
+                  </SheetClose> */}
                 </SheetHeader>
                 <div className="mt-6">
                   <FilterSidebar

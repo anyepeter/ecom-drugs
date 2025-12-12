@@ -156,7 +156,7 @@ export default function Cart() {
               onClick={handleCheckout}
             >
               <Send className="mr-2 h-5 w-5" />
-              Checkout via Telegram
+              Checkout
             </Button>
 
             {/* Clear Cart Button */}

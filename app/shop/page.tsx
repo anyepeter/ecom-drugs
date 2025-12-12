@@ -104,7 +104,7 @@ export default function ShopPage() {
     <div className="min-h-screen relative">
       {/* Hero Background Image */}
       <div
-        className="fixed top-10 inset-0 bg-cover bg-center bg-no-repeat pointer-events-none"
+        className="fixed top-12 inset-0 bg-cover bg-center bg-no-repeat pointer-events-none"
         style={{
           backgroundImage: 'url(/images/hero.avif)',
           backgroundAttachment: 'fixed'
@@ -132,11 +132,6 @@ export default function ShopPage() {
               <SheetContent side="left" className="w-80 overflow-y-auto bg-white/95 backdrop-blur-md">
                 <SheetHeader className="flex flex-row items-center justify-between">
                   <SheetTitle>Filters</SheetTitle>
-                  <SheetClose asChild>
-                    <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-                      <X className="h-4 w-4" />
-                    </Button>
-                  </SheetClose>
                 </SheetHeader>
                 <div className="mt-6">
                   <FilterSidebar

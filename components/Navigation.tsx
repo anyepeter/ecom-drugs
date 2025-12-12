@@ -196,14 +196,14 @@ export default function Navigation() {
                       HOME
                     </a>
                     
-                    {/* SHOP Link */}
+                    {/* SHOP Link
                     <a
                       href="/shop"
                       onClick={() => setIsOpen(false)}
                       className="px-4 py-3 text-sm font-semibold text-gray-700 hover:text-gray-900 hover:bg-gray-50 rounded-lg transition-all duration-200"
                     >
                       SHOP
-                    </a>
+                    </a> */}
 
                     {/* Mobile Collapsible Shop Flower */}
                     <div className="space-y-2">
