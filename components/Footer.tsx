@@ -6,7 +6,7 @@ const footerLinks = [
   { name: 'HOME', href: '/' },
   { name: 'FLOWER', href: '/shop/flowers' },
   { name: 'NON FLOWER', href: '/shop/non-flowers' },
-  { name: 'CLICK TO VERIFY', href: '#' },
+  { name: 'CLICK TO VERIFY', href: 'https://signal.me/#eu/6lm096UMr11MQ6KPDthlU5GBBKGfGp26I9caNImudJGP5lRFBXFO-43HUMvmYESC' },
 ]
 
 export default function Footer() {
@@ -24,7 +24,7 @@ export default function Footer() {
                   ZMARTIES
                 </h3>
                 <a
-                  href="#"
+                  href="/"
                   className="inline-flex items-center text-gray-600 hover:text-gray-900 transition-colors duration-200"
                   aria-label="Instagram"
                 >
