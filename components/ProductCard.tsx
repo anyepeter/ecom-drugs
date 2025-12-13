@@ -200,7 +200,7 @@ export default function ProductCard({ product }: { product: Product }) {
 
             {/* Quick Details Button - Shows on Hover */}
             <div
-              className={`absolute top-60 inset-0 bg-white/75 flex items-center justify-center transition-opacity duration-300 ${
+              className={`absolute top-[85%] inset-0 bg-white/75 flex items-center justify-center transition-opacity duration-300 ${
                 isHovered ? 'opacity-100' : 'opacity-0 pointer-events-none'
               }`}
               onClick={(e) => {

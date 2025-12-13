@@ -300,7 +300,7 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
         {relatedProducts.length > 0 && (
           <div className="border-t pt-16">
             <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-8">Related Products</h2>
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
               {relatedProducts.map((relatedProduct) => (
                 <ProductCard key={relatedProduct.id} product={relatedProduct} />
               ))}

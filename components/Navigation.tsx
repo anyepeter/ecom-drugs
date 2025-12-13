@@ -23,8 +23,8 @@ import Cart from '@/components/Cart'
 import SearchModal from '@/components/SearchModal'
 
 const shopFlowerItems = [
-  { name: 'Flowers', href: '/shop/flowers' },
-  { name: 'Non Flowers', href: '/shop/non-flowers' },
+  { name: 'Flower', href: '/shop/flowers' },
+  { name: 'Non Flower', href: '/shop/non-flowers' },
   { name: 'Bulk Only', href: '/shop/bulk' },
 ]
 
@@ -103,7 +103,7 @@ export default function Navigation() {
                       setHoverTimeout(timeout)
                     }}
                   >
-                    SHOP FLOWER
+                    SHOP
                     <ChevronDown className="h-3 w-3 lg:h-4 lg:w-4" />
                   </button>
                 </DropdownMenuTrigger>

@@ -19,7 +19,8 @@ export default function FeaturedProducts() {
   }, [dispatch, products.length])
 
   // Get first 6 products for featured section
-  const featuredProducts = products.slice(0, 6)
+  const flowerProducts = products.filter(p => p.category === 'flowers').slice(0, 4)
+  const nonFlowerProducts = products.filter(p => p.category === 'nonflower').slice(0, 4)
 
   return (
     <section className="py-16 sm:py-20 lg:py-24 bg-white">
@@ -44,22 +45,45 @@ export default function FeaturedProducts() {
         )}
 
         {/* Products Grid */}
-        {!loading && featuredProducts.length > 0 && (
+        {!loading && flowerProducts.length > 0 && (
           <>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 mb-12">
-              {featuredProducts.map((product) => (
+            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8 mb-8">
+              {flowerProducts.map((product) => (
                 <ProductCard key={product.id} product={product} />
               ))}
             </div>
 
             {/* Show More Button */}
             <div className="text-center">
-              <Link href="/shop">
+              <Link href="/shop/flowers">
                 <Button
-                  size="lg"
-                  className="bg-gray-900 hover:bg-gray-800 text-white px-8 py-6 text-lg group"
+                  size="sm"
+                  className="bg-transparent text-black border border-black hover:text-white hover:bg-gray-800 px-6 py-4 text-lg "
                 >
-                  Show More Products
+                  More flowers
+                  <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
+                </Button>
+              </Link>
+            </div>
+          </>
+        )}
+
+{!loading && nonFlowerProducts.length > 0 && (
+          <>
+            <div className="mt-12 grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8 mb-8">
+              {nonFlowerProducts.map((product) => (
+                <ProductCard key={product.id} product={product} />
+              ))}
+            </div>
+
+            {/* Show More Button */}
+            <div className="text-center">
+              <Link href="/shop/non-flowers">
+                <Button
+                  size="sm"
+                  className="bg-transparent text-black border border-black hover:text-white hover:bg-gray-800 px-6 py-4 text-lg "
+                >
+                  More non flowers
                   <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
                 </Button>
               </Link>
@@ -68,7 +92,7 @@ export default function FeaturedProducts() {
         )}
 
         {/* Empty State */}
-        {!loading && featuredProducts.length === 0 && (
+        {!loading && flowerProducts.length === 0 && (
           <div className="text-center py-12">
             <p className="text-gray-500 mb-6">No products available at the moment.</p>
             <Link href="/shop">
