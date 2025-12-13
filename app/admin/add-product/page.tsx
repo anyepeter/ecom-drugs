@@ -250,7 +250,7 @@ export default function AddProductPage() {
                 <Input
                   id="flavour"
                   type="text"
-                  placeholder="e.g., Exotic, Cake, Candy"
+                  placeholder="e.g., Indoor, Mid, Lowz"
                   value={flavour}
                   onChange={(e) => setFlavour(e.target.value)}
                   required

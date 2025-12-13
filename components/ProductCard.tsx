@@ -105,12 +105,12 @@ function ProductModal({ product, isOpen, onClose }: { product: Product, isOpen: 
               </p>
               {product.flavour && (
                 <p className="text-gray-600 mt-2">
-                  <span className="font-medium">Flavour:</span> {product.flavour}
+                  <span className="font-medium"></span> {product.flavour}
                 </p>
               )}
               {product.rate !== undefined && (
                 <p className="text-gray-600 mt-1">
-                  <span className="font-medium">Rating:</span> {product.rate}/10
+                  <span className="font-medium"></span> {product.rate}/10
                 </p>
               )}
             </div>

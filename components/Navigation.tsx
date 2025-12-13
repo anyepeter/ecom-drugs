@@ -23,9 +23,9 @@ import Cart from '@/components/Cart'
 import SearchModal from '@/components/SearchModal'
 
 const shopFlowerItems = [
-  { name: 'Flower', href: '/shop/flowers' },
-  { name: 'Non Flower', href: '/shop/non-flowers' },
-  { name: 'Bulk Only', href: '/shop/bulk' },
+  { name: 'Flower Menu', href: '/shop/flowers' },
+  { name: 'Non Flower Menu', href: '/shop/non-flowers' },
+  { name: 'Bulk Only / TP', href: '/shop/bulk' },
 ]
 
 const otherNavItems = [

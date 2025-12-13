@@ -15,9 +15,9 @@ import { fetchAllProducts } from '@/lib/redux/features/productsSlice'
 
 const categories = [
   { id: 'all', name: 'All' },
-  { id: 'flowers', name: 'Flowers' },
-  { id: 'nonflower', name: 'Non Flowers' },
-  { id: 'bulk', name: 'Bulk Only' },
+  { id: 'flowers', name: 'Flower Menu' },
+  { id: 'nonflower', name: 'Non Flower Menu' },
+  { id: 'bulk', name: 'Bulk Only / TP' },
 ]
 
 const sortOptions = [

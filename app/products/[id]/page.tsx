@@ -211,7 +211,7 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
                 </div>
               )}
               {product.flavour && (
-                <p className="text-sm text-gray-700 capitalize">Flavour: {product.flavour}</p>
+                <p className="text-sm text-gray-700 capitalize">{product.flavour}</p>
               )}
             </div>
           </div>

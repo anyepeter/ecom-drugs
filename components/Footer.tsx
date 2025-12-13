@@ -1,11 +1,12 @@
 "use client"
 
-import { Instagram, Phone, MessageCircle } from 'lucide-react'
+import { Instagram, Phone, MessageCircle, BarChart } from 'lucide-react'
 
 const footerLinks = [
   { name: 'HOME', href: '/' },
-  { name: 'FLOWER', href: '/shop/flowers' },
-  { name: 'NON FLOWER', href: '/shop/non-flowers' },
+  { name: 'FLOWER MENU', href: '/shop/flowers' },
+  { name: 'NON FLOWER MENU', href: '/shop/non-flowers' },
+  { name: 'BULK ONLY / TP', href: '/shop/bulk' },
   { name: 'CLICK TO VERIFY', href: 'https://signal.me/#eu/6lm096UMr11MQ6KPDthlU5GBBKGfGp26I9caNImudJGP5lRFBXFO-43HUMvmYESC' },
 ]
 
@@ -23,13 +24,7 @@ export default function Footer() {
                 <h3 className="text-2xl sm:text-3xl font-black text-gray-900 uppercase">
                   ZMARTIES
                 </h3>
-                <a
-                  href="/"
-                  className="inline-flex items-center text-gray-600 hover:text-gray-900 transition-colors duration-200"
-                  aria-label="Instagram"
-                >
-                  <Instagram className="w-6 h-6" />
-                </a>
+
               </div>
               <div className="flex flex-col space-y-2">
                 <a href="tel:+13182016767" className="text-sm text-gray-600 hover:text-gray-900 font-medium transition-colors duration-200 flex items-center gap-2">
@@ -37,6 +32,9 @@ export default function Footer() {
                 </a>
                 <a href="https://t.me/the_zmarties" target="_blank" rel="noopener noreferrer" className="text-sm text-gray-600 hover:text-gray-900 font-medium transition-colors duration-200 flex items-center gap-2">
                   <MessageCircle className="w-4 h-4" /> Chat on Telegram
+                </a>
+                <a href="https://t.me/+ZF3gkCQlHJA0M2Nk" target="_blank" rel="noopener noreferrer" className="text-sm text-gray-600 hover:text-gray-900 font-medium transition-colors duration-200 flex items-center gap-2">
+                  <MessageCircle className="w-4 h-4" /> Join Our Telegram
                 </a>
               </div>
             </div>

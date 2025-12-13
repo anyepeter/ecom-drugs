@@ -83,7 +83,7 @@ export default function FilterSidebar({
             Price
           </AccordionTrigger>
           <AccordionContent className="pb-4">
-            <div className="px-1">
+            <div className="px-1 mt-2">
               <Slider
                 min={priceMin}
                 max={priceMax}
@@ -106,7 +106,7 @@ export default function FilterSidebar({
         {availableFlavours.length > 0 && (
           <AccordionItem value="flavour" className="border-b border-gray-200">
             <AccordionTrigger className="text-sm font-medium text-gray-900 hover:no-underline py-4">
-              Flavour
+              Sub Category
             </AccordionTrigger>
             <AccordionContent className="pb-4">
               <div className="space-y-3">
