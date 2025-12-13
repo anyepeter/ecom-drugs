@@ -211,7 +211,7 @@ export default function Navigation() {
                         onClick={() => setIsShopFlowerOpen(!isShopFlowerOpen)}
                         className="w-full px-4 py-3 text-sm font-semibold text-gray-700 hover:text-gray-900 hover:bg-gray-50 rounded-lg transition-all duration-200 flex items-center justify-between"
                       >
-                        SHOP FLOWER
+                        SHOP
                         <ChevronRight
                           className={`h-4 w-4 transition-transform duration-200 ${
                             isShopFlowerOpen ? 'rotate-90' : ''

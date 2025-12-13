@@ -60,7 +60,7 @@ export default function FeaturedProducts() {
                   size="sm"
                   className="bg-transparent text-black border border-black hover:text-white hover:bg-gray-800 px-6 py-4 text-lg "
                 >
-                  More flowers
+                  More flower
                   <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
                 </Button>
               </Link>
@@ -83,7 +83,7 @@ export default function FeaturedProducts() {
                   size="sm"
                   className="bg-transparent text-black border border-black hover:text-white hover:bg-gray-800 px-6 py-4 text-lg "
                 >
-                  More non flowers
+                  More non flower
                   <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
                 </Button>
               </Link>
