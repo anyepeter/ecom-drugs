@@ -28,7 +28,7 @@ export default function BulkPage() {
   const [selectedFlavours, setSelectedFlavours] = useState<string[]>([])
   const [mobileFilterOpen, setMobileFilterOpen] = useState(false)
   const [currentPage, setCurrentPage] = useState(1)
-  const PRODUCTS_PER_PAGE = 9
+  const PRODUCTS_PER_PAGE = 12
 
   useEffect(() => { dispatch(fetchBulkProducts()) }, [dispatch])
 
