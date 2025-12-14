@@ -103,7 +103,7 @@ export default function FilterSidebar({
         </AccordionItem>
 
         {/* Flavour Filter */}
-        {availableFlavours.length > 0 && (
+        {/* {availableFlavours.length > 0 && (
           <AccordionItem value="flavour" className="border-b border-gray-200">
             <AccordionTrigger className="text-sm font-medium text-gray-900 hover:no-underline py-4">
               Sub Category
@@ -126,7 +126,7 @@ export default function FilterSidebar({
               </div>
             </AccordionContent>
           </AccordionItem>
-        )}
+        )} */}
       </Accordion>
     </div>
   )

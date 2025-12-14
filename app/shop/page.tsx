@@ -38,7 +38,7 @@ export default function ShopPage() {
   const [mobileFilterOpen, setMobileFilterOpen] = useState(false)
   const [currentPage, setCurrentPage] = useState(1)
 
-  const PRODUCTS_PER_PAGE = 9
+  const PRODUCTS_PER_PAGE = 12
 
   // Fetch products on mount
   useEffect(() => {
@@ -239,7 +239,7 @@ export default function ShopPage() {
                 <>
                   {sortedProducts.length > 0 ? (
                     <>
-                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+                      <div className="grid  grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
                         {paginatedProducts.map((product) => (
                           <ProductCard key={product.id} product={product} />
                         ))}
