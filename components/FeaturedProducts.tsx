@@ -23,14 +23,14 @@ export default function FeaturedProducts() {
   const nonFlowerProducts = products.filter(p => p.category === 'nonflower').slice(0, 4)
 
   return (
-    <section className="py-16 sm:py-20 lg:py-24 bg-white">
+    <section className="py-8 sm:py-16 lg:py-24 bg-white">
       <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
-        <div className="text-center mb-12 sm:mb-16">
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
+        <div className="text-center mb-6 sm:mb-16">
+          <h2 className="text-xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
             Featured Products
           </h2>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+          <p className="text-md text-gray-600 max-w-2xl mx-auto">
             Discover our premium selection of top-quality products
           </p>
         </div>

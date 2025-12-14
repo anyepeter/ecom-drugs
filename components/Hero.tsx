@@ -6,15 +6,9 @@ import Image from 'next/image'
 export default function Hero() {
   return (
     <>
-      {/* Free Shipping Banner */}
-      <div className="w-full bg-gray-100 py-4 px-4 text-center border-b border-gray-200">
-        <p className="text-sm md:text-base font-bold text-gray-900 tracking-wide uppercase">
-          FREE SHIPPING ON EVERY ORDER!
-        </p>
-      </div>
 
       {/* Hero Section */}
-      <section className="relative min-h-[85vh] flex items-center justify-center overflow-hidden bg-white">
+      <section className="relative min-h-[68vh] flex items-center justify-center overflow-hidden bg-white">
         {/* Faint Background Pattern */}
         <div
           className="absolute inset-0 opacity-[1.03] bg-no-repeat bg-center bg-cover"
@@ -51,8 +45,8 @@ export default function Hero() {
                 asChild
                 className="w-full sm:w-auto min-w-[240px] border-2 border-black text-black font-bold hover:bg-black hover:text-white transition-all duration-200 text-sm sm:text-base uppercase tracking-wide"
               >
-                <a href="/shop">
-                  CLICK TO SHOP
+                <a href="/shop/flowers">
+                  Flower Menu
                 </a>
               </Button>
               <Button
@@ -62,11 +56,9 @@ export default function Hero() {
                 className="w-full sm:w-auto min-w-[240px] border-2 border-black text-black font-bold hover:bg-black hover:text-white transition-all duration-200 text-sm sm:text-base uppercase tracking-wide"
               >
                 <a 
-                  href="https://signal.me/#eu/6lm096UMr11MQ6KPDthlU5GBBKGfGp26I9caNImudJGP5lRFBXFO-43HUMvmYESC"
-                  target="_blank"
-                  rel="noopener noreferrer"
+                  href="/shop/non-flowers"
                 >
-                  CLICK TO VERIFY
+                  Non Flower Menu
                 </a>
               </Button>
               <Button
@@ -75,7 +67,8 @@ export default function Hero() {
                 asChild
                 className="w-full sm:w-auto min-w-[240px] border-2 border-black text-black font-bold hover:bg-black hover:text-white transition-all duration-200 text-sm sm:text-base uppercase tracking-wide"
               >
-                <a href="#how-to-order">HOW TO ORDER</a>
+                <a href="/shop/bulk">
+                Bulk only / TP</a>
               </Button>
             </div>
           </div>
