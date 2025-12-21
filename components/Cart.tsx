@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button'
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet'
 import { useAppDispatch, useAppSelector } from '@/lib/redux/hooks'
 import { closeCart, removeFromCart, updateQuantity, clearCart } from '@/lib/redux/features/cartSlice'
+import { trackUserAction } from '@/lib/actions/userActions'
 
 export default function Cart() {
   const dispatch = useAppDispatch()
@@ -15,8 +16,18 @@ export default function Cart() {
   const itemCount = items.reduce((sum, item) => sum + item.quantity, 0)
 
   // Handle checkout via Telegram
-  const handleCheckout = () => {
+  const handleCheckout = async () => {
     if (items.length === 0) return
+
+        try {
+          console.log('Starting to track checkout action...')
+          
+          const result = await trackUserAction('checkout', "checkcart", items.length)
+          console.log('Tracking result:', result)
+        } catch (error) {
+          console.error('Failed to track action:', error)
+        }
+        
 
     // Format cart items as a message
     let message = "🛒 **New Order from Zmarties Website**\n\n"

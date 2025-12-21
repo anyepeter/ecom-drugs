@@ -11,6 +11,7 @@ import ProductCard from '@/components/ProductCard'
 import { useAppDispatch, useAppSelector } from '@/lib/redux/hooks'
 import { fetchAllProducts } from '@/lib/redux/features/productsSlice'
 import { addToCart, openCart } from '@/lib/redux/features/cartSlice'
+import { trackUserAction } from '@/lib/actions/userActions'
 
 export default function ProductDetailPage({ params }: { params: { id: string } }) {
   const dispatch = useAppDispatch()
@@ -40,9 +41,16 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
   }
 
   // Handle Buy Now - Direct Telegram checkout
-  const handleBuyNow = () => {
+  const handleBuyNow = async () => {
     if (!product) return
-
+    try {
+      console.log('Starting to track buy now action...')
+      const result = await trackUserAction('buy_now', product.id, quantity)
+      console.log('Tracking result:', result)
+    } catch (error) {
+      console.error('Failed to track action:', error)
+    }
+    // Track user action
     // Format message for single product purchase
     let message = "🛒 **New Order from Zmarties Website**\n\n"
     message += "**Item:**\n\n"

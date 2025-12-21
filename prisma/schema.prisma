@@ -31,3 +31,14 @@ model Product {
   @@index([category])
   @@index([createdAt])
 }
+
+model UserAction {
+  id        String   @id @default(cuid())
+  action    String   // "checkout" or "buy_now"
+  productId String?
+  quantity  Int      @default(1)
+  createdAt DateTime @default(now())
+
+  @@index([action])
+  @@index([createdAt])
+}

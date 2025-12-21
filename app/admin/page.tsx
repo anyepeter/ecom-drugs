@@ -5,7 +5,7 @@ import { getDashboardStats } from '@/lib/actions/products'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
-import { Package, Flower2, ShoppingBag, Boxes, Plus, Loader2 } from 'lucide-react'
+import { Package, Flower2, ShoppingBag, Boxes, Plus, Loader2, TrendingUp } from 'lucide-react'
 
 type DashboardStats = {
   totalProducts: number
@@ -150,6 +150,16 @@ export default function AdminDashboard() {
                   <div className="text-left">
                     <div className="font-semibold">View Products</div>
                     <div className="text-xs text-gray-500">Manage inventory</div>
+                  </div>
+                </Button>
+              </Link>
+
+              <Link href="/admin-two" className="w-full">
+                <Button variant="outline" className="w-full justify-start gap-2 h-auto py-4">
+                  <TrendingUp className="w-5 h-5" />
+                  <div className="text-left">
+                    <div className="font-semibold">User Actions</div>
+                    <div className="text-xs text-gray-500">Track checkouts & buy now</div>
                   </div>
                 </Button>
               </Link>
