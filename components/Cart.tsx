@@ -19,14 +19,19 @@ export default function Cart() {
   const handleCheckout = async () => {
     if (items.length === 0) return
 
-        try {
-          console.log('Starting to track checkout action...')
-          
-          const result = await trackUserAction('checkout', "checkcart", items.length)
-          console.log('Tracking result:', result)
-        } catch (error) {
-          console.error('Failed to track action:', error)
-        }
+    try {
+      console.log('Starting to track checkout action...')
+      
+      // Get user's IP address
+      const ipResponse = await fetch('/api/get-ip')
+      const ipData = await ipResponse.json()
+      const userIP = ipData.ip
+      
+      const result = await trackUserAction('checkout', 'cart', items.length, subtotal, userIP)
+      console.log('Tracking result:', result)
+    } catch (error) {
+      console.error('Failed to track action:', error)
+    }
         
 
     // Format cart items as a message

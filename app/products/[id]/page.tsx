@@ -44,8 +44,12 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
   const handleBuyNow = async () => {
     if (!product) return
     try {
-      console.log('Starting to track buy now action...')
-      const result = await trackUserAction('buy_now', product.id, quantity)
+
+      const ipResponse = await fetch('/api/get-ip')
+      const ipData = await ipResponse.json()
+      const userIP = ipData.ip
+      
+      const result = await trackUserAction('buy_now', product.id, quantity, product.price, userIP)
       console.log('Tracking result:', result)
     } catch (error) {
       console.error('Failed to track action:', error)

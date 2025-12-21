@@ -6,18 +6,27 @@ import { revalidatePath } from 'next/cache'
 /**
  * Track user action (checkout or buy_now)
  */
-export async function trackUserAction(action: 'checkout' | 'buy_now', productId?: string, quantity: number = 1) {
+export async function trackUserAction(
+  action: 'checkout' | 'buy_now', 
+  productId?: string, 
+  quantity: number = 1,
+  totalPrice?: number,
+  ipAddress?: string
+) {
   try {
+   
     await prisma.userAction.create({
       data: {
         action,
         productId,
-        quantity
+        quantity,
+        totalPrice,
+        ipAddress
       }
     })
 
     revalidatePath('/admin-two')
-    console.log('User action tracked successfully')
+    console.log('Tracking user action:')
     return { success: true }
   } catch (error) {
     console.error('Error tracking user action:', error)
@@ -63,6 +72,8 @@ export async function getUserActionStats() {
           action: true,
           productId: true,
           quantity: true,
+          totalPrice: true,
+          ipAddress: true,
           createdAt: true
         }
       })

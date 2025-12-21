@@ -27,7 +27,20 @@ function ProductModal({ product, isOpen, onClose }: { product: Product, isOpen: 
   const [quantity, setQuantity] = useState(1)
   const dispatch = useAppDispatch()
 
-  const handleAddToCart = () => {
+  const handleAddToCart = async () => {
+    try {
+      // Get user's IP address
+      const ipResponse = await fetch('/api/get-ip')
+      const ipData = await ipResponse.json()
+      const userIP = ipData.ip
+      
+      const totalPrice = product.price * quantity
+      const { trackUserAction } = await import('@/lib/actions/userActions')
+      await trackUserAction('checkout', product.id, quantity, totalPrice, userIP)
+    } catch (error) {
+      console.error('Failed to track action:', error)
+    }
+    
     dispatch(addToCart({ product: product as PrismaProduct, quantity }))
     dispatch(openCart())
     onClose()
@@ -151,6 +164,33 @@ function ProductModal({ product, isOpen, onClose }: { product: Product, isOpen: 
                 onClick={handleAddToCart}
               >
                 Add to Cart
+              </Button>
+              <Button
+                size="lg"
+                variant="outline"
+                className="w-full"
+                onClick={async () => {
+                  try {
+                    // Get user's IP address
+                    const ipResponse = await fetch('/api/get-ip')
+                    const ipData = await ipResponse.json()
+                    const userIP = ipData.ip
+                    
+                    const totalPrice = product.price * quantity
+                    const { trackUserAction } = await import('@/lib/actions/userActions')
+                    await trackUserAction('buy_now', product.id, quantity, totalPrice, userIP)
+                    
+                    window.open(`https://t.me/zmarties_bot?start=buy_${product.id}_${quantity}`, '_blank')
+                    onClose()
+                  } catch (error) {
+                    console.error('Failed to track action:', error)
+                    // Still proceed with buy now even if tracking fails
+                    window.open(`https://t.me/zmarties_bot?start=buy_${product.id}_${quantity}`, '_blank')
+                    onClose()
+                  }
+                }}
+              >
+                Buy Now
               </Button>
               <Link
                 href={`/products/${product.id}`}

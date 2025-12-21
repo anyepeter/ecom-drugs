@@ -17,6 +17,8 @@ type UserActionStats = {
     action: string
     productId: string | null
     quantity: number
+    totalPrice: number | null
+    ipAddress: string | null
     createdAt: Date
   }>
 }
@@ -166,7 +168,13 @@ export default function AdminTwoDashboard() {
                         </p>
                         <p className="text-sm text-gray-500">
                           Quantity: {action.quantity}
+                          {action.totalPrice && ` • Total: $${action.totalPrice.toFixed(2)}`}
                         </p>
+                        {action.ipAddress && (
+                          <p className="text-xs text-gray-400">
+                            IP: {action.ipAddress}
+                          </p>
+                        )}
                       </div>
                     </div>
                     <div className="text-right">

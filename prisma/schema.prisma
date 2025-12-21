@@ -33,11 +33,13 @@ model Product {
 }
 
 model UserAction {
-  id        String   @id @default(cuid())
-  action    String   // "checkout" or "buy_now"
-  productId String?
-  quantity  Int      @default(1)
-  createdAt DateTime @default(now())
+  id         String   @id @default(cuid())
+  action     String   // "checkout" or "buy_now"
+  productId  String?
+  quantity   Int      @default(1)
+  totalPrice Float?   // Total price of the action
+  ipAddress  String?  // User's IP address
+  createdAt  DateTime @default(now())
 
   @@index([action])
   @@index([createdAt])
