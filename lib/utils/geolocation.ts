@@ -6,7 +6,8 @@ export async function getCountryFromIP(ipAddress?: string): Promise<string | nul
   if (!ipAddress || ipAddress === 'unknown') {
     return null
   }
-
+  
+  
   // Skip local/development IPs
   if (
     ipAddress === '127.0.0.1' ||
@@ -19,7 +20,7 @@ export async function getCountryFromIP(ipAddress?: string): Promise<string | nul
   }
 
   try {
-    const response = await fetch(`http://ip-api.com/json/${ipAddress}?fields=status,country,countryCode`, {
+    const response = await fetch(`http://ip-api.com/json/${ipAddress}`, {
       method: 'GET',
       headers: {
         'Accept': 'application/json',
