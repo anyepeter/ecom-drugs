@@ -39,6 +39,7 @@ model UserAction {
   quantity   Int      @default(1)
   totalPrice Float?   // Total price of the action
   ipAddress  String?  // User's IP address
+  country    String?  // Country detected from IP address
   createdAt  DateTime @default(now())
 
   @@index([action])

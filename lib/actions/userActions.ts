@@ -1,32 +1,36 @@
 'use server'
-
+"@ts-nocheck"
 import { prisma } from '@/lib/prisma'
 import { revalidatePath } from 'next/cache'
+import { getCountryFromIP } from '@/lib/utils/geolocation'
 
 /**
  * Track user action (checkout or buy_now)
  */
 export async function trackUserAction(
-  action: 'checkout' | 'buy_now', 
-  productId?: string, 
+  action: 'checkout' | 'buy_now',
+  productId?: string,
   quantity: number = 1,
   totalPrice?: number,
   ipAddress?: string
 ) {
   try {
-   
+    // Detect country from IP address
+    const country = ipAddress ? await getCountryFromIP(ipAddress) : null
+
     await prisma.userAction.create({
       data: {
         action,
         productId,
         quantity,
         totalPrice,
-        ipAddress
+        ipAddress,
+        country
       }
     })
 
     revalidatePath('/admin-two')
-    console.log('Tracking user action:')
+    console.log('Tracking user action:', { action, country })
     return { success: true }
   } catch (error) {
     console.error('Error tracking user action:', error)
@@ -74,6 +78,7 @@ export async function getUserActionStats() {
           quantity: true,
           totalPrice: true,
           ipAddress: true,
+          country: true,
           createdAt: true
         }
       })
@@ -89,5 +94,43 @@ export async function getUserActionStats() {
   } catch (error) {
     console.error('Error fetching user action stats:', error)
     throw new Error('Failed to fetch user action statistics')
+  }
+}
+
+/**
+ * Get all user actions with pagination
+ */
+export async function getAllUserActions(page: number = 1, limit: number = 50) {
+  try {
+    const skip = (page - 1) * limit
+
+    const [actions, totalCount] = await Promise.all([
+      prisma.userAction.findMany({
+        skip,
+        take: limit,
+        orderBy: { createdAt: 'desc' },
+        select: {
+          id: true,
+          action: true,
+          productId: true,
+          quantity: true,
+          totalPrice: true,
+          ipAddress: true,
+          country: true,
+          createdAt: true
+        }
+      }),
+      prisma.userAction.count()
+    ])
+
+    return {
+      actions,
+      totalCount,
+      totalPages: Math.ceil(totalCount / limit),
+      currentPage: page
+    }
+  } catch (error) {
+    console.error('Error fetching all user actions:', error)
+    throw new Error('Failed to fetch user actions')
   }
 }

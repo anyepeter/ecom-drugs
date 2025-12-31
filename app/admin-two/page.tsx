@@ -5,7 +5,7 @@ import { getUserActionStats } from '@/lib/actions/userActions'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
-import { ArrowLeft, ShoppingCart, Zap, TrendingUp, Clock, Loader2 } from 'lucide-react'
+import { ArrowLeft, ShoppingCart, Zap, TrendingUp, Clock, Loader2, FileText } from 'lucide-react'
 
 type UserActionStats = {
   totalCheckouts: number
@@ -19,6 +19,7 @@ type UserActionStats = {
     quantity: number
     totalPrice: number | null
     ipAddress: string | null
+    country: string | null
     createdAt: Date
   }>
 }
@@ -111,10 +112,18 @@ export default function AdminTwoDashboard() {
                 </p>
               </div>
             </div>
-            <Button onClick={loadStats} disabled={loading} className="gap-2">
-              {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <TrendingUp className="w-4 h-4" />}
-              Refresh
-            </Button>
+            <div className="flex gap-2">
+              <Link href="/admin-two/all-records">
+                <Button variant="outline" className="gap-2">
+                  <FileText className="w-4 h-4" />
+                  All Records
+                </Button>
+              </Link>
+              <Button onClick={loadStats} disabled={loading} className="gap-2">
+                {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <TrendingUp className="w-4 h-4" />}
+                Refresh
+              </Button>
+            </div>
           </div>
         </div>
       </div>
@@ -148,8 +157,13 @@ export default function AdminTwoDashboard() {
 
         {/* Recent Actions */}
         <Card>
-          <CardHeader>
+          <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle>Recent Actions</CardTitle>
+            <Link href="/admin-two/all-records">
+              <Button variant="outline" size="sm">
+                View All Records
+              </Button>
+            </Link>
           </CardHeader>
           <CardContent>
             {stats?.recentActions && stats.recentActions.length > 0 ? (
@@ -170,11 +184,10 @@ export default function AdminTwoDashboard() {
                           Quantity: {action.quantity}
                           {action.totalPrice && ` • Total: $${action.totalPrice.toFixed(2)}`}
                         </p>
-                        {action.ipAddress && (
-                          <p className="text-xs text-gray-400">
-                            IP: {action.ipAddress}
-                          </p>
-                        )}
+                        <div className="flex gap-3 text-xs text-gray-400">
+                          {action.ipAddress && <span>IP: {action.ipAddress}</span>}
+                          {action.country && <span>• {action.country}</span>}
+                        </div>
                       </div>
                     </div>
                     <div className="text-right">
