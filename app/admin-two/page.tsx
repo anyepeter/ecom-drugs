@@ -5,28 +5,40 @@ import { getUserActionStats } from '@/lib/actions/userActions'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
-import { ArrowLeft, ShoppingCart, Zap, TrendingUp, Clock, Loader2, FileText } from 'lucide-react'
+import { ArrowLeft, ShoppingCart, Zap, TrendingUp, Clock, Loader2, FileText, ChevronDown, ChevronRight } from 'lucide-react'
+
+type UserAction = {
+  id: string
+  action: string
+  productId: string | null
+  quantity: number
+  totalPrice: number | null
+  ipAddress: string | null
+  country: string | null
+  createdAt: Date
+}
+
+type GroupedActions = {
+  ipAddress: string
+  country: string | null
+  actionCount: number
+  actions: UserAction[]
+  latestAction: Date
+}
 
 type UserActionStats = {
   totalCheckouts: number
   totalBuyNows: number
   todayCheckouts: number
   todayBuyNows: number
-  recentActions: Array<{
-    id: string
-    action: string
-    productId: string | null
-    quantity: number
-    totalPrice: number | null
-    ipAddress: string | null
-    country: string | null
-    createdAt: Date
-  }>
+  recentActions: UserAction[]
+  recentActionsGrouped: GroupedActions[]
 }
 
 export default function AdminTwoDashboard() {
   const [stats, setStats] = useState<UserActionStats | null>(null)
   const [loading, setLoading] = useState(true)
+  const [expandedIPs, setExpandedIPs] = useState<Set<string>>(new Set())
 
   useEffect(() => {
     loadStats()
@@ -48,33 +60,45 @@ export default function AdminTwoDashboard() {
     }
   }
 
+  const toggleIPExpansion = (ipAddress: string) => {
+    setExpandedIPs(prev => {
+      const newSet = new Set(prev)
+      if (newSet.has(ipAddress)) {
+        newSet.delete(ipAddress)
+      } else {
+        newSet.add(ipAddress)
+      }
+      return newSet
+    })
+  }
+
   const statsCards = stats ? [
     {
       title: 'Total Checkouts',
       value: stats.totalCheckouts,
       icon: ShoppingCart,
-      description: 'All-time checkout submissions',
+      description: 'Unique users (by IP)',
       color: 'text-blue-600'
     },
     {
       title: 'Total Buy Now',
       value: stats.totalBuyNows,
       icon: Zap,
-      description: 'All-time buy now actions',
+      description: 'Unique users (by IP)',
       color: 'text-green-600'
     },
     {
       title: 'Today Checkouts',
       value: stats.todayCheckouts,
       icon: TrendingUp,
-      description: 'Checkouts submitted today',
+      description: 'Unique users today (by IP)',
       color: 'text-purple-600'
     },
     {
       title: 'Today Buy Now',
       value: stats.todayBuyNows,
       icon: Clock,
-      description: 'Buy now actions today',
+      description: 'Unique users today (by IP)',
       color: 'text-orange-600'
     }
   ] : []
@@ -166,38 +190,73 @@ export default function AdminTwoDashboard() {
             </Link>
           </CardHeader>
           <CardContent>
-            {stats?.recentActions && stats.recentActions.length > 0 ? (
-              <div className="space-y-4">
-                {stats.recentActions.map((action) => (
-                  <div key={action.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-                    <div className="flex items-center gap-3">
-                      {action.action === 'checkout' ? (
-                        <ShoppingCart className="w-5 h-5 text-blue-600" />
-                      ) : (
-                        <Zap className="w-5 h-5 text-green-600" />
-                      )}
-                      <div>
-                        <p className="font-medium">
-                          {action.action === 'checkout' ? 'Checkout' : 'Buy Now'}
-                        </p>
-                        <p className="text-sm text-gray-500">
-                          Quantity: {action.quantity}
-                          {action.totalPrice && ` • Total: $${action.totalPrice.toFixed(2)}`}
-                        </p>
-                        <div className="flex gap-3 text-xs text-gray-400">
-                          {action.ipAddress && <span>IP: {action.ipAddress}</span>}
-                          {action.country && <span>• {action.country}</span>}
+            {stats?.recentActionsGrouped && stats.recentActionsGrouped.length > 0 ? (
+              <div className="space-y-3">
+                {stats.recentActionsGrouped.map((group) => (
+                  <div key={group.ipAddress} className="border rounded-lg overflow-hidden">
+                    {/* IP Address Header - Clickable to expand/collapse */}
+                    <button
+                      onClick={() => toggleIPExpansion(group.ipAddress)}
+                      className="w-full flex items-center justify-between p-4 bg-gray-50 hover:bg-gray-100 transition-colors"
+                    >
+                      <div className="flex items-center gap-3">
+                        {expandedIPs.has(group.ipAddress) ? (
+                          <ChevronDown className="w-5 h-5 text-gray-500" />
+                        ) : (
+                          <ChevronRight className="w-5 h-5 text-gray-500" />
+                        )}
+                        <div className="text-left">
+                          <div className="flex items-center gap-2">
+                            <p className="font-medium text-gray-900">
+                              {group.ipAddress}
+                            </p>
+                            {group.country && (
+                              <span className="text-sm text-gray-600">• {group.country}</span>
+                            )}
+                          </div>
+                          <p className="text-sm text-gray-500">
+                            {group.actionCount} action{group.actionCount > 1 ? 's' : ''}
+                          </p>
                         </div>
                       </div>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-sm text-gray-600">
-                        {new Date(action.createdAt).toLocaleDateString()}
-                      </p>
-                      <p className="text-xs text-gray-500">
-                        {new Date(action.createdAt).toLocaleTimeString()}
-                      </p>
-                    </div>
+                      <div className="text-right text-xs text-gray-500">
+                        {new Date(group.latestAction).toLocaleDateString()}
+                      </div>
+                    </button>
+
+                    {/* Expanded Actions */}
+                    {expandedIPs.has(group.ipAddress) && (
+                      <div className="bg-white divide-y">
+                        {group.actions.map((action) => (
+                          <div key={action.id} className="flex items-center justify-between p-4">
+                            <div className="flex items-center gap-3">
+                              {action.action === 'checkout' ? (
+                                <ShoppingCart className="w-4 h-4 text-blue-600" />
+                              ) : (
+                                <Zap className="w-4 h-4 text-green-600" />
+                              )}
+                              <div>
+                                <p className="text-sm font-medium">
+                                  {action.action === 'checkout' ? 'Checkout' : 'Buy Now'}
+                                </p>
+                                <p className="text-xs text-gray-500">
+                                  Quantity: {action.quantity}
+                                  {action.totalPrice && ` • Total: $${action.totalPrice.toFixed(2)}`}
+                                </p>
+                              </div>
+                            </div>
+                            <div className="text-right">
+                              <p className="text-xs text-gray-600">
+                                {new Date(action.createdAt).toLocaleDateString()}
+                              </p>
+                              <p className="text-xs text-gray-400">
+                                {new Date(action.createdAt).toLocaleTimeString()}
+                              </p>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>

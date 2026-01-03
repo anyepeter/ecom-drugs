@@ -9,6 +9,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { useAppDispatch } from '@/lib/redux/hooks'
 import { addToCart, openCart } from '@/lib/redux/features/cartSlice'
 import type { Product as PrismaProduct } from '@prisma/client'
+import { toast } from 'sonner'
 
 // Product type definition
 type Product = {
@@ -33,16 +34,18 @@ function ProductModal({ product, isOpen, onClose }: { product: Product, isOpen: 
       const ipResponse = await fetch('/api/get-ip')
       const ipData = await ipResponse.json()
       const userIP = ipData.ip
-      
+
       const totalPrice = product.price * quantity
       const { trackUserAction } = await import('@/lib/actions/userActions')
       await trackUserAction('checkout', product.id, quantity, totalPrice, userIP)
     } catch (error) {
       console.error('Failed to track action:', error)
     }
-    
+
     dispatch(addToCart({ product: product as PrismaProduct, quantity }))
-    dispatch(openCart())
+    toast.success(`${quantity} ${quantity > 1 ? 'items' : 'item'} added to cart!`, {
+      description: product.name,
+    })
     onClose()
   }
 

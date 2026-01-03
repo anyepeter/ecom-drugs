@@ -12,6 +12,7 @@ import { useAppDispatch, useAppSelector } from '@/lib/redux/hooks'
 import { fetchAllProducts } from '@/lib/redux/features/productsSlice'
 import { addToCart, openCart } from '@/lib/redux/features/cartSlice'
 import { trackUserAction } from '@/lib/actions/userActions'
+import { toast } from 'sonner'
 
 export default function ProductDetailPage({ params }: { params: { id: string } }) {
   const dispatch = useAppDispatch()
@@ -282,7 +283,9 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
                   className="flex-1 bg-gray-900 hover:bg-gray-800 text-white uppercase tracking-wide"
                   onClick={() => {
                     dispatch(addToCart({ product, quantity }))
-                    dispatch(openCart())
+                    toast.success(`${quantity} ${quantity > 1 ? 'items' : 'item'} added to cart!`, {
+                      description: product.name,
+                    })
                   }}
                 >
                   Add to Cart

@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import './globals.css'
 import StoreProvider from '@/lib/redux/provider'
 import { Analytics } from "@vercel/analytics/next"
+import { Toaster } from 'sonner'
 
 export const metadata: Metadata = {
   title: 'ZMARTIES - Official Page',
@@ -28,7 +29,8 @@ export default function RootLayout({
       </head>
       <body className="font-questrial">
         <StoreProvider>
-        <Analytics/>
+          <Toaster position="top-center" richColors />
+          <Analytics/>
           {children}
         </StoreProvider>
       </body>

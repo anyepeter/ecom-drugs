@@ -5,7 +5,7 @@ import { getAllUserActions } from '@/lib/actions/userActions'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
-import { ArrowLeft, ShoppingCart, Zap, Loader2, ChevronLeft, ChevronRight, Globe } from 'lucide-react'
+import { ArrowLeft, ShoppingCart, Zap, Loader2, ChevronLeft, ChevronRight, Globe, ChevronDown, ChevronUp } from 'lucide-react'
 
 type UserAction = {
   id: string
@@ -18,13 +18,23 @@ type UserAction = {
   createdAt: Date
 }
 
+type GroupedActions = {
+  ipAddress: string
+  country: string | null
+  actionCount: number
+  actions: UserAction[]
+  latestAction: Date
+}
+
 export default function AllRecordsPage() {
-  const [actions, setActions] = useState<UserAction[]>([])
+  const [actionsGrouped, setActionsGrouped] = useState<GroupedActions[]>([])
   const [loading, setLoading] = useState(true)
   const [currentPage, setCurrentPage] = useState(1)
   const [totalPages, setTotalPages] = useState(1)
   const [totalCount, setTotalCount] = useState(0)
-  const recordsPerPage = 50
+  const [totalGroups, setTotalGroups] = useState(0)
+  const [expandedIPs, setExpandedIPs] = useState<Set<string>>(new Set())
+  const recordsPerPage = 20
 
   useEffect(() => {
     loadActions(currentPage)
@@ -34,15 +44,28 @@ export default function AllRecordsPage() {
     try {
       setLoading(true)
       const data = await getAllUserActions(page, recordsPerPage)
-      setActions(data.actions)
+      setActionsGrouped(data.actionsGrouped)
       setTotalPages(data.totalPages)
       setTotalCount(data.totalCount)
+      setTotalGroups(data.totalGroups)
       setCurrentPage(data.currentPage)
     } catch (error) {
       console.error('Failed to load actions:', error)
     } finally {
       setLoading(false)
     }
+  }
+
+  const toggleIPExpansion = (ipAddress: string) => {
+    setExpandedIPs(prev => {
+      const newSet = new Set(prev)
+      if (newSet.has(ipAddress)) {
+        newSet.delete(ipAddress)
+      } else {
+        newSet.add(ipAddress)
+      }
+      return newSet
+    })
   }
 
   const handlePreviousPage = () => {
@@ -57,7 +80,7 @@ export default function AllRecordsPage() {
     }
   }
 
-  if (loading && actions.length === 0) {
+  if (loading && actionsGrouped.length === 0) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="flex flex-col items-center gap-3">
@@ -86,7 +109,7 @@ export default function AllRecordsPage() {
                   All User Actions
                 </h1>
                 <p className="text-sm text-gray-600 mt-1">
-                  Total records: {totalCount}
+                  {totalGroups} unique IPs • {totalCount} total actions
                 </p>
               </div>
             </div>
@@ -101,136 +124,126 @@ export default function AllRecordsPage() {
             <CardTitle>User Actions Records</CardTitle>
           </CardHeader>
           <CardContent>
-            {actions.length > 0 ? (
+            {actionsGrouped.length > 0 ? (
               <>
-                {/* Desktop Table View */}
-                <div className="hidden md:block overflow-x-auto">
-                  <table className="w-full">
-                    <thead className="bg-gray-50 border-b">
-                      <tr>
-                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          Action
-                        </th>
-                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          Product ID
-                        </th>
-                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          Quantity
-                        </th>
-                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          Total Price
-                        </th>
-                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          IP Address
-                        </th>
-                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          Country
-                        </th>
-                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          Date
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody className="bg-white divide-y divide-gray-200">
-                      {actions.map((action) => (
-                        <tr key={action.id} className="hover:bg-gray-50">
-                          <td className="px-4 py-4 whitespace-nowrap">
-                            <div className="flex items-center gap-2">
-                              {action.action === 'checkout' ? (
-                                <ShoppingCart className="w-4 h-4 text-blue-600" />
-                              ) : (
-                                <Zap className="w-4 h-4 text-green-600" />
-                              )}
-                              <span className="text-sm font-medium text-gray-900">
-                                {action.action === 'checkout' ? 'Checkout' : 'Buy Now'}
-                              </span>
-                            </div>
-                          </td>
-                          <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-500">
-                            {action.productId ? (
-                              <code className="text-xs bg-gray-100 px-2 py-1 rounded">
-                                {action.productId.substring(0, 8)}...
-                              </code>
-                            ) : (
-                              <span className="text-gray-400">-</span>
-                            )}
-                          </td>
-                          <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
-                            {action.quantity}
-                          </td>
-                          <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
-                            {action.totalPrice ? `$${action.totalPrice.toFixed(2)}` : '-'}
-                          </td>
-                          <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-500">
-                            {action.ipAddress || '-'}
-                          </td>
-                          <td className="px-4 py-4 whitespace-nowrap">
-                            {action.country ? (
-                              <div className="flex items-center gap-2">
-                                <Globe className="w-4 h-4 text-gray-400" />
-                                <span className="text-sm text-gray-900">{action.country}</span>
-                              </div>
-                            ) : (
-                              <span className="text-gray-400">-</span>
-                            )}
-                          </td>
-                          <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-500">
-                            <div>
-                              <div>{new Date(action.createdAt).toLocaleDateString()}</div>
-                              <div className="text-xs text-gray-400">
-                                {new Date(action.createdAt).toLocaleTimeString()}
-                              </div>
-                            </div>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-
-                {/* Mobile Card View */}
-                <div className="md:hidden space-y-4">
-                  {actions.map((action) => (
-                    <div key={action.id} className="border rounded-lg p-4 bg-white">
-                      <div className="flex items-center justify-between mb-3">
-                        <div className="flex items-center gap-2">
-                          {action.action === 'checkout' ? (
-                            <ShoppingCart className="w-5 h-5 text-blue-600" />
+                {/* Grouped IP View */}
+                <div className="space-y-3">
+                  {actionsGrouped.map((group) => (
+                    <div key={group.ipAddress} className="border rounded-lg overflow-hidden">
+                      {/* IP Address Header */}
+                      <button
+                        onClick={() => toggleIPExpansion(group.ipAddress)}
+                        className="w-full flex items-center justify-between p-4 bg-gray-50 hover:bg-gray-100 transition-colors"
+                      >
+                        <div className="flex items-center gap-3">
+                          {expandedIPs.has(group.ipAddress) ? (
+                            <ChevronDown className="w-5 h-5 text-gray-500 flex-shrink-0" />
                           ) : (
-                            <Zap className="w-5 h-5 text-green-600" />
+                            <ChevronUp className="w-5 h-5 text-gray-500 flex-shrink-0" />
                           )}
-                          <span className="font-medium">
-                            {action.action === 'checkout' ? 'Checkout' : 'Buy Now'}
-                          </span>
+                          <div className="text-left">
+                            <div className="flex items-center gap-2 flex-wrap">
+                              <p className="font-medium text-gray-900">{group.ipAddress}</p>
+                              {group.country && (
+                                <div className="flex items-center gap-1">
+                                  <Globe className="w-4 h-4 text-gray-400" />
+                                  <span className="text-sm text-gray-600">{group.country}</span>
+                                </div>
+                              )}
+                            </div>
+                            <p className="text-sm text-gray-500 mt-1">
+                              {group.actionCount} action{group.actionCount > 1 ? 's' : ''}
+                            </p>
+                          </div>
                         </div>
-                        <span className="text-sm text-gray-500">
-                          Qty: {action.quantity}
-                        </span>
-                      </div>
+                        <div className="text-right text-xs text-gray-500">
+                          Latest: {new Date(group.latestAction).toLocaleDateString()}
+                        </div>
+                      </button>
 
-                      {action.totalPrice && (
-                        <div className="text-sm mb-2">
-                          <span className="text-gray-600">Total: </span>
-                          <span className="font-semibold">${action.totalPrice.toFixed(2)}</span>
+                      {/* Expanded Actions */}
+                      {expandedIPs.has(group.ipAddress) && (
+                        <div className="bg-white">
+                          {/* Desktop Table for expanded items */}
+                          <div className="hidden md:block">
+                            <table className="w-full">
+                              <thead className="bg-gray-100 border-y">
+                                <tr>
+                                  <th className="px-4 py-2 text-left text-xs font-medium text-gray-500">Action</th>
+                                  <th className="px-4 py-2 text-left text-xs font-medium text-gray-500">Product ID</th>
+                                  <th className="px-4 py-2 text-left text-xs font-medium text-gray-500">Qty</th>
+                                  <th className="px-4 py-2 text-left text-xs font-medium text-gray-500">Price</th>
+                                  <th className="px-4 py-2 text-left text-xs font-medium text-gray-500">Date</th>
+                                </tr>
+                              </thead>
+                              <tbody className="divide-y">
+                                {group.actions.map((action) => (
+                                  <tr key={action.id} className="hover:bg-gray-50">
+                                    <td className="px-4 py-3">
+                                      <div className="flex items-center gap-2">
+                                        {action.action === 'checkout' ? (
+                                          <ShoppingCart className="w-4 h-4 text-blue-600" />
+                                        ) : (
+                                          <Zap className="w-4 h-4 text-green-600" />
+                                        )}
+                                        <span className="text-sm">
+                                          {action.action === 'checkout' ? 'Checkout' : 'Buy Now'}
+                                        </span>
+                                      </div>
+                                    </td>
+                                    <td className="px-4 py-3 text-sm text-gray-500">
+                                      {action.productId ? (
+                                        <code className="text-xs bg-gray-100 px-2 py-1 rounded">
+                                          {action.productId.substring(0, 8)}...
+                                        </code>
+                                      ) : '-'}
+                                    </td>
+                                    <td className="px-4 py-3 text-sm">{action.quantity}</td>
+                                    <td className="px-4 py-3 text-sm">
+                                      {action.totalPrice ? `$${action.totalPrice.toFixed(2)}` : '-'}
+                                    </td>
+                                    <td className="px-4 py-3 text-xs text-gray-500">
+                                      <div>{new Date(action.createdAt).toLocaleDateString()}</div>
+                                      <div className="text-gray-400">
+                                        {new Date(action.createdAt).toLocaleTimeString()}
+                                      </div>
+                                    </td>
+                                  </tr>
+                                ))}
+                              </tbody>
+                            </table>
+                          </div>
+
+                          {/* Mobile Card View for expanded items */}
+                          <div className="md:hidden divide-y">
+                            {group.actions.map((action) => (
+                              <div key={action.id} className="p-4">
+                                <div className="flex items-center justify-between mb-2">
+                                  <div className="flex items-center gap-2">
+                                    {action.action === 'checkout' ? (
+                                      <ShoppingCart className="w-4 h-4 text-blue-600" />
+                                    ) : (
+                                      <Zap className="w-4 h-4 text-green-600" />
+                                    )}
+                                    <span className="text-sm font-medium">
+                                      {action.action === 'checkout' ? 'Checkout' : 'Buy Now'}
+                                    </span>
+                                  </div>
+                                  <span className="text-sm text-gray-500">Qty: {action.quantity}</span>
+                                </div>
+                                {action.totalPrice && (
+                                  <p className="text-sm mb-1">
+                                    Total: <span className="font-semibold">${action.totalPrice.toFixed(2)}</span>
+                                  </p>
+                                )}
+                                <p className="text-xs text-gray-400">
+                                  {new Date(action.createdAt).toLocaleString()}
+                                </p>
+                              </div>
+                            ))}
+                          </div>
                         </div>
                       )}
-
-                      {action.country && (
-                        <div className="flex items-center gap-2 text-sm mb-2">
-                          <Globe className="w-4 h-4 text-gray-400" />
-                          <span className="text-gray-900">{action.country}</span>
-                        </div>
-                      )}
-
-                      {action.ipAddress && (
-                        <div className="text-xs text-gray-500 mb-2">
-                          IP: {action.ipAddress}
-                        </div>
-                      )}
-
-                      <div className="text-xs text-gray-400 mt-3 pt-3 border-t">
-                        {new Date(action.createdAt).toLocaleString()}
-                      </div>
                     </div>
                   ))}
                 </div>
@@ -238,7 +251,7 @@ export default function AllRecordsPage() {
                 {/* Pagination */}
                 <div className="mt-6 flex items-center justify-between border-t pt-4">
                   <div className="text-sm text-gray-700">
-                    Showing page {currentPage} of {totalPages} ({totalCount} total records)
+                    Showing page {currentPage} of {totalPages} ({totalGroups} unique IPs • {totalCount} total actions)
                   </div>
                   <div className="flex gap-2">
                     <Button

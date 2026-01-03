@@ -44,32 +44,48 @@ export async function trackUserAction(
 export async function getUserActionStats() {
   try {
     const [
-      totalCheckouts,
-      totalBuyNows,
-      todayCheckouts,
-      todayBuyNows,
+      allCheckouts,
+      allBuyNows,
+      todayCheckoutsData,
+      todayBuyNowsData,
       recentActions
     ] = await Promise.all([
-      prisma.userAction.count({ where: { action: 'checkout' } }),
-      prisma.userAction.count({ where: { action: 'buy_now' } }),
-      prisma.userAction.count({
+      // Get all checkout actions with distinct IP addresses
+      prisma.userAction.findMany({
+        where: { action: 'checkout' },
+        select: { ipAddress: true },
+        distinct: ['ipAddress']
+      }),
+      // Get all buy_now actions with distinct IP addresses
+      prisma.userAction.findMany({
+        where: { action: 'buy_now' },
+        select: { ipAddress: true },
+        distinct: ['ipAddress']
+      }),
+      // Get today's checkout actions with distinct IP addresses
+      prisma.userAction.findMany({
         where: {
           action: 'checkout',
           createdAt: {
             gte: new Date(new Date().setHours(0, 0, 0, 0))
           }
-        }
+        },
+        select: { ipAddress: true },
+        distinct: ['ipAddress']
       }),
-      prisma.userAction.count({
+      // Get today's buy_now actions with distinct IP addresses
+      prisma.userAction.findMany({
         where: {
           action: 'buy_now',
           createdAt: {
             gte: new Date(new Date().setHours(0, 0, 0, 0))
           }
-        }
+        },
+        select: { ipAddress: true },
+        distinct: ['ipAddress']
       }),
       prisma.userAction.findMany({
-        take: 10,
+        take: 100, // Get more actions to group by IP
         orderBy: { createdAt: 'desc' },
         select: {
           id: true,
@@ -84,12 +100,45 @@ export async function getUserActionStats() {
       })
     ])
 
+    // Count unique IP addresses
+    const totalCheckouts = allCheckouts.length
+    const totalBuyNows = allBuyNows.length
+    const todayCheckouts = todayCheckoutsData.length
+    const todayBuyNows = todayBuyNowsData.length
+
+    // Group recent actions by IP address
+    const groupedByIP = recentActions.reduce((acc, action) => {
+      const ip = action.ipAddress || 'unknown'
+      if (!acc[ip]) {
+        acc[ip] = []
+      }
+      acc[ip].push(action)
+      return acc
+    }, {} as Record<string, typeof recentActions>)
+
+    // Convert to array and sort by most recent action
+    const recentActionsGrouped = Object.entries(groupedByIP)
+      .map(([ipAddress, actions]) => ({
+        ipAddress,
+        country: actions[0].country, // Use country from first action
+        actionCount: actions.length,
+        actions: actions.sort((a, b) =>
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        ),
+        latestAction: actions[0].createdAt
+      }))
+      .sort((a, b) =>
+        new Date(b.latestAction).getTime() - new Date(a.latestAction).getTime()
+      )
+      .slice(0, 20) // Limit to 20 unique IPs
+
     return {
       totalCheckouts,
       totalBuyNows,
       todayCheckouts,
       todayBuyNows,
-      recentActions
+      recentActions,
+      recentActionsGrouped
     }
   } catch (error) {
     console.error('Error fetching user action stats:', error)
@@ -98,35 +147,61 @@ export async function getUserActionStats() {
 }
 
 /**
- * Get all user actions with pagination
+ * Get all user actions with pagination and grouping by IP
  */
 export async function getAllUserActions(page: number = 1, limit: number = 50) {
   try {
-    const skip = (page - 1) * limit
+    // First, get all unique IP addresses with pagination
+    const allActions = await prisma.userAction.findMany({
+      orderBy: { createdAt: 'desc' },
+      select: {
+        id: true,
+        action: true,
+        productId: true,
+        quantity: true,
+        totalPrice: true,
+        ipAddress: true,
+        country: true,
+        createdAt: true
+      }
+    })
 
-    const [actions, totalCount] = await Promise.all([
-      prisma.userAction.findMany({
-        skip,
-        take: limit,
-        orderBy: { createdAt: 'desc' },
-        select: {
-          id: true,
-          action: true,
-          productId: true,
-          quantity: true,
-          totalPrice: true,
-          ipAddress: true,
-          country: true,
-          createdAt: true
-        }
-      }),
-      prisma.userAction.count()
-    ])
+    // Group by IP address
+    const groupedByIP = allActions.reduce((acc, action) => {
+      const ip = action.ipAddress || 'unknown'
+      if (!acc[ip]) {
+        acc[ip] = []
+      }
+      acc[ip].push(action)
+      return acc
+    }, {} as Record<string, typeof allActions>)
+
+    // Convert to array and sort by most recent action
+    const allGrouped = Object.entries(groupedByIP)
+      .map(([ipAddress, actions]) => ({
+        ipAddress,
+        country: actions[0].country,
+        actionCount: actions.length,
+        actions: actions.sort((a, b) =>
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        ),
+        latestAction: actions[0].createdAt
+      }))
+      .sort((a, b) =>
+        new Date(b.latestAction).getTime() - new Date(a.latestAction).getTime()
+      )
+
+    // Paginate the grouped results
+    const totalGroups = allGrouped.length
+    const skip = (page - 1) * limit
+    const paginatedGroups = allGrouped.slice(skip, skip + limit)
 
     return {
-      actions,
-      totalCount,
-      totalPages: Math.ceil(totalCount / limit),
+      actions: allActions, // Keep for compatibility
+      actionsGrouped: paginatedGroups,
+      totalCount: allActions.length,
+      totalGroups,
+      totalPages: Math.ceil(totalGroups / limit),
       currentPage: page
     }
   } catch (error) {

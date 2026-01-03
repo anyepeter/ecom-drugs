@@ -154,7 +154,7 @@ export default function AdminDashboard() {
                 </Button>
               </Link>
 
-              <Link href="/admin-two" className="w-full">
+              {/* <Link href="/admin-two" className="w-full">
                 <Button variant="outline" className="w-full justify-start gap-2 h-auto py-4">
                   <TrendingUp className="w-5 h-5" />
                   <div className="text-left">
@@ -162,7 +162,7 @@ export default function AdminDashboard() {
                     <div className="text-xs text-gray-500">Track checkouts & buy now</div>
                   </div>
                 </Button>
-              </Link>
+              </Link> */}
 
               <Link href="/shop" className="w-full">
                 <Button variant="outline" className="w-full justify-start gap-2 h-auto py-4">
